@@ -3,7 +3,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verificação de Pagamento</title>
  
- <!-- Meta Pixel Code -->
+<!-- Meta Pixel Code -->
 <script async="" src="js/fbevents.js"></script><script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -16,13 +16,14 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '4179716432354886');
 fbq('track', 'PageView');
 
-// 🔥 Evento personalizado ao abrir a página de verificação
-fbq('trackCustom', 'PagamentoPageOpened');
+// 🔥 Dispara InitiateCheckout automaticamente ao abrir a página
+fbq('track', 'InitiateCheckout');
 </script>
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=4179716432354886&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
+
  
   <style>
     /* ===== ESTILO BASE ===== */
