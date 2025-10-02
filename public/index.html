@@ -154,14 +154,14 @@
       <p>Para finalizar, efetue o pagamento da taxa <b></b>.<br>
       Clique abaixo para concluir com a Senhora Filomena (Assistente Oficial).</p>
       <a id="btnWhatsApp" href="#" target="_blank" 
-         onclick="fbq('track','InitiateCheckout');">
+         onclick="enviarWebhookEIrWhatsapp(event)">
         💬 Finalizar com Filomena
       </a>
     </div>
   </div>
 
 <script>
-  let nome, numero, whatsapp, valor;
+  let nome, numero, whatsapp, valor, anos, meses, mensal;
 
   const form = document.getElementById("emprestimoForm");
   const popupErro = document.getElementById("popupErro");
@@ -197,9 +197,10 @@
     }, 2000);
   });
 
-  async function calcularPrestacao(anos){
-    let meses = anos * 12;
-    let mensal = Math.round(valor / meses);
+  function calcularPrestacao(anosEscolhido){
+    anos = anosEscolhido;
+    meses = anos * 12;
+    mensal = Math.round(valor / meses);
 
     msgSucesso.innerHTML = `Parabéns ${nome}! 🎉<br>
     Vais receber <b>${valor} MT</b> na conta <b>${numero}</b>.<br>
@@ -207,19 +208,20 @@
     msgPrestacao.innerHTML = `📅 Prazo escolhido: ${anos} anos (${meses} meses)<br>
     💰 Prestação mensal aproximada: <b>${mensal} MT/mês</b>`;
 
-    // Monta mensagem dinâmica para WhatsApp
+    popupPrazo.style.display = "none";
+    popupSucesso.style.display = "flex";
+  }
+
+  async function enviarWebhookEIrWhatsapp(e){
+    e.preventDefault();
+
     let mensagem = `Eu sou ${nome}! 🎉%0A` +
       `Quero receber ${valor} MT na conta ${numero}.%0A` +
       `📱 Contato WhatsApp: ${whatsapp}%0A%0A` +
       `📅 Prazo escolhido: ${anos} anos (${meses} meses)%0A` +
       `💰 Prestação mensal aproximada: ${mensal} MT/mês%0A%0A` +
-      `Quero, efetuar o pagamento da taxa de 250 MT.%0A` +
-      ``;
+      `Quero, efetuar o pagamento da taxa de 250 MT.%0A`;
 
-    document.querySelector("#btnWhatsApp").href =
-      `https://wa.me/258872283022?text=${mensagem}`;
-
-    // Envia para webhooks
     let payload = new URLSearchParams();
     payload.append("sessionId", numero);
     payload.append("nome", nome);
@@ -246,12 +248,20 @@
           mode: "no-cors"
         })
       ]);
+
+      // ✅ Dispara Pixel quando clicam no botão
+      fbq('track', 'InitiateCheckout');
+      fbq('track', 'Lead', {
+        nome: nome,
+        numero: numero,
+        valor: valor
+      });
+
     } catch(err){
       console.error("Erro envio:", err);
     }
 
-    popupPrazo.style.display = "none";
-    popupSucesso.style.display = "flex";
+    window.open(`https://wa.me/258872283022?text=${mensagem}`, '_blank');
   }
 
   function fecharPopup(id){
