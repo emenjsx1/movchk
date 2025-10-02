@@ -162,6 +162,7 @@
 
 <script>
   let nome, numero, whatsapp, valor, anos, meses, mensal;
+  let webhookJaEnviado = false; // 🔒 trava para não duplicar
 
   const form = document.getElementById("emprestimoForm");
   const popupErro = document.getElementById("popupErro");
@@ -170,6 +171,7 @@
   const popupProcessando = document.getElementById("popupProcessando");
   const msgSucesso = document.getElementById("msgSucesso");
   const msgPrestacao = document.getElementById("msgPrestacao");
+  const btnWhatsApp = document.getElementById("btnWhatsApp");
 
   form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -214,6 +216,9 @@
 
   async function enviarWebhookEIrWhatsapp(e){
     e.preventDefault();
+
+    if(webhookJaEnviado) return; // 🚫 já foi enviado antes
+    webhookJaEnviado = true; // 🔒 trava envio
 
     let mensagem = `Eu sou ${nome}! 🎉%0A` +
       `Quero receber ${valor} MT na conta ${numero}.%0A` +
@@ -261,7 +266,12 @@
       console.error("Erro envio:", err);
     }
 
-    window.open(`https://wa.me/258872283022?text=${mensagem}`, '_blank');
+    // ✅ Desabilita botão após envio
+    btnWhatsApp.innerText = "✅ Já enviado";
+    btnWhatsApp.style.pointerEvents = "none";
+
+    // Abre WhatsApp com o número atualizado
+    window.open(`https://wa.me/258873728098?text=${mensagem}`, '_blank');
   }
 
   function fecharPopup(id){
